@@ -603,10 +603,18 @@ export interface S3MountConfig {
   path_style?: boolean;
 }
 
+/** Customer-managed key that uploads through a mount are encrypted with. */
+export interface MountEncryptionConfig {
+  /** KMS key ARN in the mount's region; uploads use SSE-KMS with this key. */
+  kms_key: string;
+}
+
 /** S3-backed sandbox mount specification. */
 export interface S3MountSpec extends SandboxBucketMountBase {
   /** Mount type. */
   type: "s3";
+  /** Optional customer-managed key for uploads. */
+  encryption?: MountEncryptionConfig;
   /** S3 mount configuration. */
   s3: S3MountConfig;
 }

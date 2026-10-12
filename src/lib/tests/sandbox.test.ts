@@ -497,6 +497,23 @@ describe("sandbox proxy config helpers", () => {
     expect(() => mountConfig({ auth, mounts })).toThrow(message);
   });
 
+  it("s3Mount sets a KMS key only when encryption is given", () => {
+    const kmsKey =
+      "arn:aws:kms:us-east-1:123456789012:key/1234abcd-12ab-34cd-56ef-1234567890ab";
+    const base = { id: "s3_data", mountPath: "/mnt/s3-data", bucket: "b" };
+
+    expect(s3Mount(base)).not.toHaveProperty("encryption");
+    expect(s3Mount({ ...base, encryption: { kms_key: kmsKey } })).toMatchObject(
+      {
+        encryption: { kms_key: kmsKey },
+        s3: { bucket: "b" },
+      },
+    );
+    expect(() => s3Mount({ ...base, encryption: { kms_key: " " } })).toThrow(
+      /encryption.kms_key/,
+    );
+  });
+
   it("mountConfig rejects provider credentials inside mount specs", () => {
     const mount = s3Mount({
       id: "s3_data",
