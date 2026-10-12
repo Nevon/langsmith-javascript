@@ -260,6 +260,8 @@ export namespace SandboxResponse {
 
       contexthub?: SandboxapiS3BucketMountSpec.Contexthub;
 
+      encryption?: SandboxapiS3BucketMountSpec.Encryption;
+
       gcs?: SandboxapiS3BucketMountSpec.Gcs;
 
       git?: SandboxapiS3BucketMountSpec.Git;
@@ -301,6 +303,14 @@ export namespace SandboxResponse {
         initial_pull_only?: boolean;
       }
 
+      export interface Encryption {
+        /**
+         * KMSKey is the key to encrypt uploads with. S3 mounts take a KMS key ARN in the
+         * mount's region.
+         */
+        kms_key: string;
+      }
+
       export interface Gcs {
         bucket: string;
 
@@ -337,6 +347,8 @@ export namespace SandboxResponse {
 
       contexthub?: SandboxapiGcsBucketMountSpec.Contexthub;
 
+      encryption?: SandboxapiGcsBucketMountSpec.Encryption;
+
       git?: SandboxapiGcsBucketMountSpec.Git;
 
       read_only?: boolean;
@@ -370,6 +382,14 @@ export namespace SandboxResponse {
          * for the sandbox's lifetime.
          */
         initial_pull_only?: boolean;
+      }
+
+      export interface Encryption {
+        /**
+         * KMSKey is the key to encrypt uploads with. S3 mounts take a KMS key ARN in the
+         * mount's region.
+         */
+        kms_key: string;
       }
 
       export interface Git {
@@ -413,6 +433,8 @@ export namespace SandboxResponse {
       cache?: SandboxapiGitRepoMountSpec.Cache;
 
       contexthub?: SandboxapiGitRepoMountSpec.Contexthub;
+
+      encryption?: SandboxapiGitRepoMountSpec.Encryption;
 
       gcs?: SandboxapiGitRepoMountSpec.Gcs;
 
@@ -459,6 +481,14 @@ export namespace SandboxResponse {
         initial_pull_only?: boolean;
       }
 
+      export interface Encryption {
+        /**
+         * KMSKey is the key to encrypt uploads with. S3 mounts take a KMS key ARN in the
+         * mount's region.
+         */
+        kms_key: string;
+      }
+
       export interface Gcs {
         bucket: string;
 
@@ -489,6 +519,8 @@ export namespace SandboxResponse {
 
       cache?: SandboxapiContextHubRepoMountSpec.Cache;
 
+      encryption?: SandboxapiContextHubRepoMountSpec.Encryption;
+
       gcs?: SandboxapiContextHubRepoMountSpec.Gcs;
 
       git?: SandboxapiContextHubRepoMountSpec.Git;
@@ -518,6 +550,14 @@ export namespace SandboxResponse {
         max_size_bytes?: number;
 
         writeback_seconds?: number;
+      }
+
+      export interface Encryption {
+        /**
+         * KMSKey is the key to encrypt uploads with. S3 mounts take a KMS key ARN in the
+         * mount's region.
+         */
+        kms_key: string;
       }
 
       export interface Gcs {
