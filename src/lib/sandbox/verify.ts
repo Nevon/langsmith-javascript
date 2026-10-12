@@ -99,7 +99,72 @@ interface Jwk {
   kty?: string;
   crv?: string;
   kid?: string;
+  alg?: string;
   x?: string;
+  y?: string;
+  n?: string;
+  e?: string;
+}
+
+interface VerificationKey {
+  alg: string;
+  key: CryptoKey;
+}
+
+interface AlgorithmSpec {
+  kty: string;
+  crv?: string;
+  importParams: AlgorithmIdentifier | RsaHashedImportParams | EcKeyImportParams;
+  verifyParams: AlgorithmIdentifier | RsaPssParams | EcdsaParams;
+}
+
+// Every JOSE asymmetric algorithm; the JWKS key picks which one a token may use.
+const ALGORITHMS: Record<string, AlgorithmSpec> = {
+  EdDSA: {
+    kty: "OKP",
+    crv: "Ed25519",
+    importParams: { name: "Ed25519" },
+    verifyParams: { name: "Ed25519" },
+  },
+};
+for (const [bits, curve] of [
+  [256, "P-256"],
+  [384, "P-384"],
+  [512, "P-521"],
+] as const) {
+  const hash = `SHA-${bits}`;
+  ALGORITHMS[`RS${bits}`] = {
+    kty: "RSA",
+    importParams: { name: "RSASSA-PKCS1-v1_5", hash },
+    verifyParams: { name: "RSASSA-PKCS1-v1_5" },
+  };
+  // JWS RSA-PSS uses a salt as long as the hash.
+  ALGORITHMS[`PS${bits}`] = {
+    kty: "RSA",
+    importParams: { name: "RSA-PSS", hash },
+    verifyParams: { name: "RSA-PSS", saltLength: bits / 8 },
+  };
+  // The JWS ECDSA signature is raw r||s, which Web Crypto verifies directly.
+  ALGORITHMS[`ES${bits}`] = {
+    kty: "EC",
+    crv: curve,
+    importParams: { name: "ECDSA", namedCurve: curve },
+    verifyParams: { name: "ECDSA", hash },
+  };
+}
+
+const USER_TOKEN_ALGORITHMS = Object.keys(ALGORITHMS);
+const CALLBACK_ALGORITHMS = ["EdDSA"];
+
+/** A JWK's algorithm: its `alg` member if supported, else derived from its key type. */
+function jwkAlgorithm(jwk: Jwk): string | undefined {
+  if (jwk.alg !== undefined) {
+    return USER_TOKEN_ALGORITHMS.includes(jwk.alg) ? jwk.alg : undefined;
+  }
+  if (jwk.kty === "RSA") return "RS256";
+  return USER_TOKEN_ALGORITHMS.find(
+    (alg) => ALGORITHMS[alg].kty === jwk.kty && ALGORITHMS[alg].crv === jwk.crv,
+  );
 }
 
 function fail(message: string): never {
@@ -202,7 +267,7 @@ function timingSafeEqual(a: string, b: string): boolean {
 export class SandboxTokenVerifier {
   private readonly jwksUrl: string;
   private readonly timeoutMs: number;
-  private keys = new Map<string, Promise<CryptoKey>>();
+  private keys = new Map<string, VerificationKey>();
   private fetchedAt = 0;
   private inflight?: Promise<void>;
 
@@ -233,6 +298,7 @@ export class SandboxTokenVerifier {
   ): Promise<SandboxUser> {
     const claims = await this.verify(
       token,
+      USER_TOKEN_ALGORITHMS,
       serviceHost(options.audience),
       options.issuer,
     );
@@ -260,6 +326,7 @@ export class SandboxTokenVerifier {
   ): Promise<SandboxCallback> {
     const claims = await this.verify(
       options.signature,
+      CALLBACK_ALGORITHMS,
       options.aud,
       options.issuer,
     );
@@ -293,6 +360,7 @@ export class SandboxTokenVerifier {
 
   private async verify(
     token: string,
+    algorithms: string[],
     audience: AudienceMatcher | undefined,
     issuer: string | undefined,
   ): Promise<Claims> {
@@ -308,14 +376,19 @@ export class SandboxTokenVerifier {
     } catch (e) {
       fail(`malformed token: ${(e as Error).message}`);
     }
-    if (header.alg !== "EdDSA") {
+    if (!algorithms.includes(header.alg as string)) {
       fail(`unexpected signing algorithm: ${JSON.stringify(header.alg)}`);
     }
     if (typeof header.kid !== "string" || !header.kid) fail("token has no kid");
 
-    const key = await this.key(header.kid);
+    const { alg, key } = await this.key(header.kid);
+    // The key belongs to one algorithm; the token must claim that one.
+    if (header.alg !== alg) {
+      fail(`unexpected signing algorithm: ${JSON.stringify(header.alg)}`);
+    }
     const signed = new TextEncoder().encode(`${parts[0]}.${parts[1]}`);
-    if (!(await subtle().verify({ name: "Ed25519" }, key, signature, signed))) {
+    const { verifyParams } = ALGORITHMS[alg];
+    if (!(await subtle().verify(verifyParams, key, signature, signed))) {
       fail("invalid signature");
     }
 
@@ -347,7 +420,7 @@ export class SandboxTokenVerifier {
     return claims;
   }
 
-  private async key(kid: string): Promise<CryptoKey> {
+  private async key(kid: string): Promise<VerificationKey> {
     const age = Date.now() - this.fetchedAt;
     const fresh = this.keys.has(kid) && age < JWKS_TTL_MS;
     if (!fresh && (this.fetchedAt === 0 || age >= JWKS_MIN_REFRESH_MS)) {
@@ -356,17 +429,9 @@ export class SandboxTokenVerifier {
       });
       await this.inflight;
     }
-    const key = this.keys.get(kid);
-    if (!key) fail(`unknown signing key: ${kid}`);
-    try {
-      return await key;
-    } catch (e) {
-      fail(
-        `signing key ${kid} is not a usable Ed25519 key: ${
-          (e as Error).message
-        }`,
-      );
-    }
+    const entry = this.keys.get(kid);
+    if (!entry) fail(`unknown signing key: ${kid}`);
+    return entry;
   }
 
   private async refresh(): Promise<void> {
@@ -386,20 +451,34 @@ export class SandboxTokenVerifier {
     if (!Array.isArray(entries)) {
       fail("invalid JWKS: expected an object with a keys array");
     }
-    const keys = new Map<string, Promise<CryptoKey>>();
+    const keys = new Map<string, VerificationKey>();
+    const webCrypto = subtle();
     for (const jwk of entries as (Jwk | null)[]) {
-      if (typeof jwk !== "object" || jwk === null) continue;
-      if (jwk.kty !== "OKP" || jwk.crv !== "Ed25519" || !jwk.kid || !jwk.x)
+      if (typeof jwk !== "object" || jwk === null || !jwk.kid) continue;
+      const alg = jwkAlgorithm(jwk);
+      if (!alg) continue;
+      const { kty, crv, importParams } = ALGORITHMS[alg];
+      if (jwk.kty !== kty || jwk.crv !== crv) continue;
+      try {
+        // Import with the key's own algorithm: Web Crypto fixes the RSA hash here.
+        const key = await webCrypto.importKey(
+          "jwk",
+          {
+            kty: jwk.kty,
+            crv: jwk.crv,
+            x: jwk.x,
+            y: jwk.y,
+            n: jwk.n,
+            e: jwk.e,
+          },
+          importParams,
+          false,
+          ["verify"],
+        );
+        keys.set(jwk.kid, { alg, key });
+      } catch {
         continue;
-      const imported = subtle().importKey(
-        "jwk",
-        { kty: "OKP", crv: "Ed25519", x: jwk.x },
-        { name: "Ed25519" },
-        false,
-        ["verify"],
-      );
-      imported.catch(() => undefined);
-      keys.set(jwk.kid, imported);
+      }
     }
     this.keys = keys;
     this.fetchedAt = Date.now();
