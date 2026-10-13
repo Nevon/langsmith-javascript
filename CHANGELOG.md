@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.10.13](https://github.com/langchain-ai/langsmith-javascript/compare/v0.10.12...v0.10.13) (2026-10-13)
+
+
+### Bug Fixes
+
+* cover all brace-expansion security patch lines ([#45](https://github.com/langchain-ai/langsmith-javascript/issues/45)) ([2c36f4e](https://github.com/langchain-ai/langsmith-javascript/commit/2c36f4e3ecbefc84632cb1a1fd7947a97cce36eb))
+* **sdk:** merge AddressApi with Address to ensure easier serialization ([#47](https://github.com/langchain-ai/langsmith-javascript/issues/47)) ([7a46bea](https://github.com/langchain-ai/langsmith-javascript/commit/7a46bea0378aecbe01249a156e12477027897b9a))
+
 ## [0.10.12](https://github.com/langchain-ai/langsmith-javascript/compare/v0.10.11...v0.10.12) (2026-10-13)
 
 
