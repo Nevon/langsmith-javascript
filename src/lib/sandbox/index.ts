@@ -108,6 +108,7 @@ export type {
   SandboxProxySecret,
   SandboxMount,
   MountCacheConfig,
+  MountEncryptionConfig,
   ContextHubMountConfig,
   ContextHubMountSpec,
   GCSMountConfig,

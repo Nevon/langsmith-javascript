@@ -4,6 +4,7 @@ import type {
   GitMountRefSpec,
   GitMountSpec,
   MountCacheConfig,
+  MountEncryptionConfig,
   SandboxAwsAuthRule,
   SandboxGcpAuthRule,
   S3MountSpec,
@@ -98,6 +99,7 @@ export function s3Mount({
   pathStyle = false,
   readOnly,
   cache,
+  encryption,
 }: {
   id: string;
   mountPath: string;
@@ -108,6 +110,7 @@ export function s3Mount({
   pathStyle?: boolean;
   readOnly?: boolean;
   cache?: MountCacheConfig;
+  encryption?: MountEncryptionConfig;
 }): S3MountSpec {
   const mount: S3MountSpec = {
     id: requireNonEmptyString(id, "id"),
@@ -128,6 +131,11 @@ export function s3Mount({
   }
   if (cache !== undefined) {
     mount.cache = { ...cache };
+  }
+  if (encryption !== undefined) {
+    mount.encryption = {
+      kms_key: requireNonEmptyString(encryption.kms_key, "encryption.kms_key"),
+    };
   }
   return mount;
 }
