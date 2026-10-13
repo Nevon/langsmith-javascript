@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.10.12](https://github.com/langchain-ai/langsmith-javascript/compare/v0.10.11...v0.10.12) (2026-10-13)
+
+
+### Features
+
+* **runs:** add ai_search field and SSE streaming to query endpoints ([da3a95b](https://github.com/langchain-ai/langsmith-javascript/commit/da3a95bae3be74e8fe7af80ec84bfb1f893391e8))
+* **sandbox:** accept any JOSE asymmetric algorithm chosen by the JWKS key ([#46](https://github.com/langchain-ai/langsmith-javascript/issues/46)) ([988b7d1](https://github.com/langchain-ai/langsmith-javascript/commit/988b7d1366200930621092198919dad69e157bd9))
+* **sandboxes:** add encryption spec and cache/encryption mount variants ([6047b3c](https://github.com/langchain-ai/langsmith-javascript/commit/6047b3c2500b0291a8bb6b8492a15a243198790c))
+* **webhooks:** add test_webhook_destination endpoint ([a5c70fd](https://github.com/langchain-ai/langsmith-javascript/commit/a5c70fdb5fac90901a20b2a45a5dc1c43ec71ca9))
+
+
+### Bug Fixes
+
+* bump vulnerable transitive dependencies ([#43](https://github.com/langchain-ai/langsmith-javascript/issues/43)) ([caa8c27](https://github.com/langchain-ai/langsmith-javascript/commit/caa8c2747356093843f8a57f5ea08fdaed92e9b9))
+
+
+### Chores
+
+* move sandbox auth options to the bottom of README.md ([#44](https://github.com/langchain-ai/langsmith-javascript/issues/44)) ([d2d2a42](https://github.com/langchain-ai/langsmith-javascript/commit/d2d2a422166c5221df830f841e2ba6cedcc75b40))
+
 ## [0.10.11](https://github.com/langchain-ai/langsmith-javascript/compare/v0.10.10...v0.10.11) (2026-10-09)
 
 
