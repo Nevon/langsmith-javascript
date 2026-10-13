@@ -1,3 +1,4 @@
+import { addressToLrn } from "./address.js";
 import * as uuid from "./utils/uuid/src/index.js";
 import { getOpenAPIBaseUrl } from "./utils/api_url.js";
 import type { OTELContext } from "./experimental/otel/types.js";
@@ -1861,7 +1862,7 @@ export class Client implements LangSmithTracingClientInterface {
 
   /**
    * (beta) Access the sessions resource, which resolves an address to the
-   * project its traces go to: `client.sessions.resolve(address.toApiAddress())`.
+   * project its traces go to: `client.sessions.resolve(address)`.
    */
   public get sessions(): Sessions {
     this._checkStainlessVersion("0.18.0");
@@ -3359,9 +3360,7 @@ export class Client implements LangSmithTracingClientInterface {
 
   /** The ID of the project an address names, with one request. */
   private async _resolveAddress(address: Address): Promise<string> {
-    const { session_id: sessionId } = await this.sessions.resolve(
-      address.toApiAddress(),
-    );
+    const { session_id: sessionId } = await this.sessions.resolve(address);
     assertUuid(sessionId);
     return sessionId;
   }
@@ -5672,7 +5671,7 @@ export class Client implements LangSmithTracingClientInterface {
       return feedback as Feedback;
     }
     const body = JSON.stringify(
-      address ? { ...feedback, address: address._toLrn() } : feedback,
+      address ? { ...feedback, address: addressToLrn(address) } : feedback,
     );
     const url = `${this.apiUrl}/feedback`;
     await this.caller.call(async () => {
