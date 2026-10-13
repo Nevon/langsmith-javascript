@@ -1,5 +1,8 @@
 import {
-  AgentAddress,
+  type AgentAddress,
+  addressFromEnv,
+  addressFromLrn,
+  addressToLrn,
   EnvAddressError,
   ensureAgent,
   envNames,
@@ -47,7 +50,7 @@ function getEnvProject(): string | undefined {
  */
 export function resolveFromEnv(): Tier {
   const project = getEnvProject();
-  const address = AgentAddress.fromEnv();
+  const address = addressFromEnv();
   if (project && address) {
     throw new EnvAddressError(
       "LANGSMITH_AGENT_* and a project are both set in the environment.",
@@ -92,7 +95,7 @@ export function applyToPayload(
     // is sent. It is parsed again, so a malformed one cannot fail the whole
     // batch in the backend.
     try {
-      address = AgentAddress._fromLrn(payload.address);
+      address = addressFromLrn(payload.address);
     } catch {
       throw new Error("The run's `address` is not a valid agent address.");
     }
@@ -103,7 +106,7 @@ export function applyToPayload(
   const namedProject =
     payload.session_id != null || payload.session_name != null;
   if (!address && !update && !namedProject) {
-    address = AgentAddress.fromEnv();
+    address = addressFromEnv();
   }
   if (!address) {
     return;
@@ -112,7 +115,7 @@ export function applyToPayload(
     "Sending runs to an `address` is in beta and enabled per workspace; a " +
       "workspace without it rejects the runs.",
   );
-  payload.address = address._toLrn();
+  payload.address = addressToLrn(address);
   if (!namedProject) {
     delete payload.session_name;
     delete payload.session_id;

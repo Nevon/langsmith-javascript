@@ -1,3 +1,4 @@
+import { addressToLrn, addressFromLrn } from "./address.js";
 import { Client } from "./client.js";
 import { isEnvTracingEnabled } from "./env.js";
 import {
@@ -33,7 +34,7 @@ import {
   rejectConflicting,
   resolveFromEnv,
 } from "./utils/addressing.js";
-import { AgentAddress, EnvAddressError, ensureAgent } from "./address.js";
+import { type AgentAddress, EnvAddressError, ensureAgent } from "./address.js";
 
 const TIMESTAMP_LENGTH = 36;
 // DNS namespace for UUID v5 (same as Python's uuid.NAMESPACE_DNS)
@@ -197,7 +198,7 @@ const HEADER_SAFE_REPLICA_FIELDS = new Set([
 /** Rebuilds an untrusted header address; `undefined` if unusable. */
 function addressFromHeader(value: unknown): AgentAddress | undefined {
   try {
-    return AgentAddress._fromLrn(value);
+    return addressFromLrn(value);
   } catch {
     // Values are untrusted, so not logged.
     console.warn("Ignoring an unusable address in a `baggage` header.");
@@ -301,7 +302,7 @@ class Baggage {
     }
     if (this.address) {
       items.push(
-        `langsmith-address=${encodeURIComponent(this.address._toLrn())}`,
+        `langsmith-address=${encodeURIComponent(addressToLrn(this.address))}`,
       );
     }
 
@@ -752,7 +753,8 @@ export class RunTree implements BaseRun {
       primary === undefined &&
       !this.replicas?.some((r) => r.primary === true) &&
       projectName === this.project_name &&
-      address?._toLrn() === this.address?._toLrn()
+      (address ? addressToLrn(address) : undefined) ===
+        (this.address ? addressToLrn(this.address) : undefined)
     ) {
       return {
         ...baseRun,
@@ -760,7 +762,8 @@ export class RunTree implements BaseRun {
         address,
       };
     }
-    const seed = projectName ?? address?._toLrn() ?? "agent//";
+    const seed =
+      projectName ?? (address ? addressToLrn(address) : undefined) ?? "agent//";
 
     // Apply reroot logic before ID remapping
     if (reroot) {
