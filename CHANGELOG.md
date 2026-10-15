@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.11.0](https://github.com/langchain-ai/langsmith-javascript/compare/v0.10.13...v0.11.0) (2026-10-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* **sandboxes:** split ProxyGCPConfig into workload-identity and service-account variants
+
+### Features
+
+* **configs:** add deletion/enforcement fields and include_all_configs ([7df1ae2](https://github.com/langchain-ai/langsmith-javascript/commit/7df1ae2ca07fa57fcfd0c125fbeacd891ca551ae))
+* **evaluators:** add agent_id filter to evaluator spend endpoint ([be176ba](https://github.com/langchain-ai/langsmith-javascript/commit/be176baae685f137b123151de63a2f776f4eb3bb))
+* **otel:** send OTLP traces to an Agent environment ([#41](https://github.com/langchain-ai/langsmith-javascript/issues/41)) ([6887a9e](https://github.com/langchain-ai/langsmith-javascript/commit/6887a9efd53bcf7133064946057d053e22d0371e))
+* **runs:** add min/max feedback_modified_at filter fields ([bbc9667](https://github.com/langchain-ai/langsmith-javascript/commit/bbc96674b2ee38741b5cadd8002aa571d9e70534))
+* **sandboxes:** add Azure Blob mount and Azure proxy auth config support ([457d282](https://github.com/langchain-ai/langsmith-javascript/commit/457d282f6bea6532e1ec5ac0f40671af6826c5ce))
+* **sandboxes:** add subject_scope and workload identity fields to AWS and GCP configs ([a5bfcf3](https://github.com/langchain-ai/langsmith-javascript/commit/a5bfcf34b749be2adcc2da2b98124e8deaa8ff49))
+* **sandboxes:** split ProxyGCPConfig into workload-identity and service-account variants ([107e756](https://github.com/langchain-ai/langsmith-javascript/commit/107e756766be4c43af75fd883d8a3e47f84e07f5))
+
+
+### Bug Fixes
+
+* isolate concurrent comparative evaluator run order ([#48](https://github.com/langchain-ai/langsmith-javascript/issues/48)) ([8377ecd](https://github.com/langchain-ai/langsmith-javascript/commit/8377ecdf9038be82365b67bffb03a8065cc04fef))
+* preserve NullableHeaders in public declarations ([#50](https://github.com/langchain-ai/langsmith-javascript/issues/50)) ([294751e](https://github.com/langchain-ai/langsmith-javascript/commit/294751e17b0884e7509d893fc54145a3612eb489))
+
 ## [0.10.13](https://github.com/langchain-ai/langsmith-javascript/compare/v0.10.12...v0.10.13) (2026-10-13)
 
 
