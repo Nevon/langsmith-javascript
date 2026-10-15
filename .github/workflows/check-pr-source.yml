@@ -1,8 +1,9 @@
 name: Check PR source
 
-# Production main only takes the stlc promotion PR (stainless/release) and the
-# release-please PR. Urgent fix: add the `skip-pr-source-check` label, then run
-# "stlc: sync from production" in the staging repo.
+# Production main only takes the Copybara export pull request and the
+# release-please pull request (including per-component release branches).
+# Urgent fix: add the `skip-pr-source-check` label, then make the same change
+# in sdks/typescript in langchainplus so the next export does not revert it.
 
 on:
   pull_request:
@@ -24,13 +25,13 @@ jobs:
           SKIP: ${{ contains(github.event.pull_request.labels.*.name, 'skip-pr-source-check') }}
         run: |
           if [ "$SKIP" = "true" ]; then
-            echo "::warning::skip-pr-source-check label present. After merging, run 'stlc: sync from production' in langsmith-javascript-staging so staging catches up."
+            echo "::warning::skip-pr-source-check label present. After merging, make the same change in sdks/typescript in langchainplus so the next export does not revert it."
             exit 0
           fi
           if [ "$SAME_REPO" = "true" ]; then
             case "$HEAD" in
-              stainless/release|release-please--branches--main|release-please--branches--main--components--*) exit 0 ;;
+              copybara/export-javascript|release-please--branches--main|release-please--branches--main--components--*) exit 0 ;;
             esac
           fi
-          echo "::error::PRs to main must come from stainless/release. Open the change against langsmith-javascript-staging instead, or add the skip-pr-source-check label for an urgent production fix."
+          echo "::error::PRs to main must come from copybara/export-javascript. Open the change in sdks/typescript in langchainplus, or add the skip-pr-source-check label for an urgent production fix."
           exit 1
