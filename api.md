@@ -263,6 +263,23 @@ Methods:
 - <code title="get /api/v1/platform/annotation-queues/{queue_id}/items/count">client.annotationQueues.items.<a href="./src/resources/annotation-queues/items.ts">retrieveCount</a>(queueID, { ...params }) -> ItemRetrieveCountResponse</code>
 - <code title="get /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/placement">client.annotationQueues.items.<a href="./src/resources/annotation-queues/items.ts">retrievePlacement</a>(itemID, { ...params }) -> ItemRetrievePlacementResponse</code>
 
+# PromptWebhooks
+
+Types:
+
+- <code><a href="./src/resources/prompt-webhooks.ts">PromptWebhook</a></code>
+- <code><a href="./src/resources/prompt-webhooks.ts">PromptWebhookListResponse</a></code>
+- <code><a href="./src/resources/prompt-webhooks.ts">PromptWebhookTestResponse</a></code>
+
+Methods:
+
+- <code title="post /api/v1/prompt-webhooks">client.promptWebhooks.<a href="./src/resources/prompt-webhooks.ts">create</a>({ ...params }) -> PromptWebhook</code>
+- <code title="get /api/v1/prompt-webhooks/{webhook_id}">client.promptWebhooks.<a href="./src/resources/prompt-webhooks.ts">retrieve</a>(webhookID) -> PromptWebhook</code>
+- <code title="patch /api/v1/prompt-webhooks/{webhook_id}">client.promptWebhooks.<a href="./src/resources/prompt-webhooks.ts">update</a>(webhookID, { ...params }) -> PromptWebhook</code>
+- <code title="get /api/v1/prompt-webhooks">client.promptWebhooks.<a href="./src/resources/prompt-webhooks.ts">list</a>() -> PromptWebhookListResponse</code>
+- <code title="delete /api/v1/prompt-webhooks/{webhook_id}">client.promptWebhooks.<a href="./src/resources/prompt-webhooks.ts">delete</a>(webhookID) -> void</code>
+- <code title="post /api/v1/prompt-webhooks/test">client.promptWebhooks.<a href="./src/resources/prompt-webhooks.ts">test</a>({ ...params }) -> PromptWebhookTestResponse</code>
+
 # Info
 
 Types:
