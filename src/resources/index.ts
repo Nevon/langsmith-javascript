@@ -79,6 +79,15 @@ export {
   type ProductFeedbackRetrieveResponse,
   type ProductFeedbackCreateParams,
 } from './product-feedback';
+export {
+  PromptWebhooks,
+  type PromptWebhook,
+  type PromptWebhookListResponse,
+  type PromptWebhookTestResponse,
+  type PromptWebhookCreateParams,
+  type PromptWebhookUpdateParams,
+  type PromptWebhookTestParams,
+} from './prompt-webhooks';
 export { Public } from './public/public';
 export {
   Runs,
