@@ -139,6 +139,7 @@ describe('resource onlineEvaluators', () => {
   test.skip('spend: required and optional params', async () => {
     const response = await client.onlineEvaluators.spend({
       period_start: 'period_start',
+      agent_id: 'agent_id',
       dataset_id: 'dataset_id',
       evaluator_id: 'evaluator_id',
       feedback_key: 'feedback_key',
