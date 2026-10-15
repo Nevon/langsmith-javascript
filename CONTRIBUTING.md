@@ -70,6 +70,6 @@ pnpm fix
 
 ## Open a pull request
 
-External contributors should open an issue on `langsmith-javascript`. That repository's main branch only accepts the Copybara export pull request and the release-please pull request, so an SDK change is a pull request in langchainplus that edits `sdks/javascript`.
+External contributors should open an issue on `langsmith-javascript`. An SDK change is a pull request in langchainplus that edits `sdks/javascript`. Copybara pushes that tree to `langsmith-javascript` main. Other pull requests to that main have to be the release-please pull request.
 
-After that pull request merges, merge the `[EXPORT] sdks/javascript` pull request on `langsmith-javascript` with a merge commit. Do not hand-edit the version in `package.json`, `src/version.ts`, `README.md`, `CHANGELOG.md`, or `.release-please-manifest.json`. Release-please writes those on `langsmith-javascript`, and the export leaves them there.
+Do not hand-edit the version in `package.json`, `src/version.ts`, `README.md`, `CHANGELOG.md`, or `.release-please-manifest.json`. Release-please writes those on `langsmith-javascript`, and the export leaves them there.

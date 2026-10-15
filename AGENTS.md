@@ -1,12 +1,12 @@
 # Instructions for code modifications in the JS/TS SDK
 
-The JavaScript SDK source in langchainplus is `sdks/javascript`. Edit it here. A merge to main that changes this directory adds a commit to the `[EXPORT] sdks/javascript` pull request on `langsmith-javascript`. Merge that pull request with a merge commit.
+The JavaScript SDK source in langchainplus is `sdks/javascript`. Edit it here. A merge to main that changes this directory is pushed to `langsmith-javascript` main.
 
 This tree holds the hand-written client (tracing, run trees, evaluation, sandbox, wrappers, jest/vitest helpers) in `src/lib/`, on top of the Stainless-generated REST client in `src/`.
 
 ## External contributor PRs
 
-`langsmith-javascript` main only accepts the Copybara export pull request and the release-please pull request. An SDK change is a pull request in langchainplus that edits `sdks/javascript`.
+Copybara pushes `sdks/javascript` to `langsmith-javascript` main. Other pull requests to that main have to be the release-please pull request. An SDK change is a pull request in langchainplus that edits `sdks/javascript`.
 
 Do not authorize GitHub Actions on external contributors' pull requests. Review before pushing, cherry-pick reviewed commits onto an internal branch, preserve contributor authorship, and open the replacement pull request in langchainplus.
 
@@ -38,7 +38,7 @@ Entry points such as `langsmith/traceable` or `langsmith/wrappers/openai` are on
 
 ## Releasing
 
-Releases are cut by release-please from conventional commits on `langsmith-javascript` main, after the export pull request is merged with a merge commit. Do not hand-edit `package.json`, `src/version.ts`, `README.md`, `CHANGELOG.md`, or `.release-please-manifest.json` to bump the version. The export leaves those files on `langsmith-javascript`. Do not push tags.
+Releases are cut by release-please from conventional commits on `langsmith-javascript` main, after Copybara pushes the export there. Do not hand-edit `package.json`, `src/version.ts`, `README.md`, `CHANGELOG.md`, or `.release-please-manifest.json` to bump the version. The export leaves those files on `langsmith-javascript`. Do not push tags.
 
 ## Conventions
 
