@@ -150,6 +150,14 @@ export interface CreateOnlineCodeEvaluatorRequest {
    * (s3_urls) at evaluation time. Default false.
    */
   require_attachments?: boolean;
+
+  /**
+   * WorkspaceSecretsKeys names the workspace secrets this evaluator may use. Each is
+   * sent as a header on requests to the hosts allowed for that secret; evaluator
+   * code never sees the value. Requires advanced_features_enabled, and each secret
+   * needs an allowed host with a header.
+   */
+  workspace_secrets_keys?: Array<string>;
 }
 
 export namespace CreateOnlineCodeEvaluatorRequest {
@@ -228,6 +236,14 @@ export interface OnlineCodeEvaluator {
    * (s3_urls) at evaluation time. Default false.
    */
   require_attachments?: boolean;
+
+  /**
+   * WorkspaceSecretsKeys names the workspace secrets this evaluator may use. Each is
+   * sent as a header on requests to the hosts allowed for that secret; evaluator
+   * code never sees the value. Requires advanced_features_enabled, and each secret
+   * needs an allowed host with a header.
+   */
+  workspace_secrets_keys?: Array<string>;
 }
 
 export namespace OnlineCodeEvaluator {
@@ -404,6 +420,15 @@ export interface UpdateOnlineCodeEvaluatorRequest {
    * sandbox snapshot.
    */
   require_attachments?: boolean;
+
+  /**
+   * WorkspaceSecretsKeys names the workspace secrets this evaluator may use. Each is
+   * sent as a header on requests to the hosts allowed for that secret; evaluator
+   * code never sees the value. Requires advanced_features_enabled, and each secret
+   * needs an allowed host with a header. Omit to keep the current list; [] clears
+   * it. Changing it does not rebuild the evaluator.
+   */
+  workspace_secrets_keys?: Array<string>;
 }
 
 export namespace UpdateOnlineCodeEvaluatorRequest {
